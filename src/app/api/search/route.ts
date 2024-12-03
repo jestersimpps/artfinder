@@ -68,8 +68,10 @@ Return the response in this exact JSON format:
     response.artworks.map(async (artwork: ArtworkBase) => {
       try {
         const searchQuery = `${artwork.title} ${artwork.artist} artwork`;
+        const host = request.headers.get('host');
+        const protocol = process.env.NODE_ENV === 'development' ? 'http' : 'https';
         const imageResponse = await fetch(
-          `${request.nextUrl.origin}/api/images?query=${encodeURIComponent(searchQuery)}`
+          `${protocol}://${host}/api/images?query=${encodeURIComponent(searchQuery)}`
         );
         const imageData = await imageResponse.json();
         return {
