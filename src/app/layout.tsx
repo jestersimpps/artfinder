@@ -14,7 +14,7 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Art Explorer | Discover Artworks",
+  title: "Art Search",
   description: "Explore and discover artworks through AI-powered search. Find paintings, sculptures, and other artworks based on your descriptions.",
   keywords: "art, artwork, paintings, art search, art explorer, AI art search",
 };

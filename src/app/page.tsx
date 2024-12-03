@@ -25,7 +25,7 @@ export default function Home() {
   return (
     <div className="min-h-screen p-8">
       <main className="max-w-6xl mx-auto">
-        <h1 className="text-4xl font-bold text-center mb-8">Art Explorer</h1>
+        <h1 className="text-4xl font-bold text-center mb-8">Art Search</h1>
         
         <form onSubmit={handleSearch} className="mb-12">
           <div className="flex gap-4 max-w-2xl mx-auto">
