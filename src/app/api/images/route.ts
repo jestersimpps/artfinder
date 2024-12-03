@@ -10,30 +10,34 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
+    const searchUrl = `https://www.bing.com/images/search?q=${encodeURIComponent(query)}`;
     
     const response = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.9'
       }
     });
 
     const html = await response.text();
     const $ = cheerio.load(html);
-    
-    // Find image URLs in the page
-    const imageUrls: string[] = [];
-    $('img').each((_, element) => {
-      const src = $(element).attr('src');
-      if (src && src.startsWith('http')) {
-        imageUrls.push(src);
-      }
-    });
 
-    // Get the first valid image URL or return a placeholder
-    const imageUrl = imageUrls[0] || 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+    // Find the first image result
+    const imageUrl = $('.iusc').first().attr('m');
     
-    return NextResponse.json({ imageUrl });
+    if (!imageUrl) {
+      return NextResponse.json({ error: "No images found" }, { status: 404 });
+    }
+
+    try {
+      const imageData = JSON.parse(imageUrl);
+      return NextResponse.json({ imageUrl: imageData.murl });
+    } catch (parseError) {
+      console.error("Error parsing image data:", parseError);
+      return NextResponse.json({ error: "Failed to parse image data" }, { status: 500 });
+    }
+
   } catch (error) {
     console.error("Error fetching image:", error);
     return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
