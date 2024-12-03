@@ -1,8 +1,12 @@
 import { NextResponse } from "next/server";
-import { customsearch_v1 } from '@googleapis/customsearch';
-import { google } from 'googleapis';
 
-const customSearch = google.customsearch('v1');
+const placeholderImages = [
+  'https://images.unsplash.com/photo-1541961017774-22349e4a1262',
+  'https://images.unsplash.com/photo-1549887534-1541e9326642',
+  'https://images.unsplash.com/photo-1541963463532-d68292c34b19',
+  'https://images.unsplash.com/photo-1579783483458-83d02161294e',
+  'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5'
+];
 
 export async function GET(request: Request) {
   try {
@@ -13,21 +17,9 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
-    const response = await customSearch.cse.list({
-      auth: process.env.GOOGLE_API_KEY,
-      cx: process.env.GOOGLE_CSE_ID,
-      q: query + " artwork",
-      searchType: 'image',
-      num: 1,
-      imgSize: 'LARGE',
-      safe: 'active'
-    });
-
-    if (!response.data.items || response.data.items.length === 0) {
-      return NextResponse.json({ error: "No images found" }, { status: 404 });
-    }
-
-    return NextResponse.json({ imageUrl: response.data.items[0].link });
+    // Return a random image from the placeholder images
+    const randomImage = placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
+    return NextResponse.json({ imageUrl: randomImage });
   } catch (error) {
     console.error("Error fetching image:", error);
     return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
