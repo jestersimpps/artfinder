@@ -63,9 +63,9 @@ export default function Home() {
           {isLoading ? (
             <div className="col-span-full text-center">Loading...</div>
           ) : artworks.length > 0 ? (
-            artworks.map((artwork) => (
+            artworks.map((artwork, index) => (
               <ArtworkCard
-                key={artwork.id}
+                key={artwork.id || `artwork-${index}`}
                 title={artwork.title}
                 artist={artwork.artist}
                 year={artwork.year}
