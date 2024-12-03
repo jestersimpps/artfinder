@@ -57,8 +57,15 @@ Return the response in this exact JSON format:
   }
 
   // Add images to each artwork
+  interface ArtworkBase {
+    title: string;
+    artist: string;
+    year: string;
+    description: string;
+  }
+
   const artworksWithImages = await Promise.all(
-    response.artworks.map(async (artwork) => {
+    response.artworks.map(async (artwork: ArtworkBase) => {
       try {
         const searchQuery = `${artwork.title} ${artwork.artist} artwork`;
         const imageResponse = await fetch(
