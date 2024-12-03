@@ -20,7 +20,20 @@ export async function searchArtworks(query: string): Promise<ArtworkResponse[]> 
       messages: [
         {
           role: "system",
-          content: "You are an art expert. Generate artwork information based on the user's description. Return exactly 3 artworks that match the description or theme."
+          content: `You are an art expert. Generate artwork information based on the user's description. Return exactly 3 artworks that match the description or theme.
+Return the response in this exact JSON format:
+{
+  "artworks": [
+    {
+      "id": "unique-string",
+      "title": "artwork title",
+      "artist": "artist name",
+      "year": "year created",
+      "imageUrl": "https://images.unsplash.com/photo-appropriate-to-artwork",
+      "description": "brief description"
+    }
+  ]
+}`
         },
         {
           role: "user",
@@ -32,9 +45,15 @@ export async function searchArtworks(query: string): Promise<ArtworkResponse[]> 
     });
 
     const response = JSON.parse(completion.choices[0].message.content);
-    return response.artworks || [];
+    if (!response.artworks || !Array.isArray(response.artworks)) {
+      throw new Error('Invalid response format from OpenAI');
+    }
+    return response.artworks;
   } catch (error) {
     console.error('Error calling OpenAI:', error);
+    if (error instanceof SyntaxError) {
+      throw new Error('Invalid JSON response from OpenAI');
+    }
     throw error;
   }
 }

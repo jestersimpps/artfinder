@@ -1,19 +1,19 @@
 'use client';
 import { useState } from 'react';
 import ArtworkCard from '@/components/ArtworkCard';
-import { mockApiCall } from '@/lib/mockData';
-import type { Artwork } from '@/lib/mockData';
+import { searchArtworks } from '@/lib/artworkService';
+import type { ArtworkResponse } from '@/lib/artworkService';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [artworks, setArtworks] = useState<Artwork[]>([]);
+  const [artworks, setArtworks] = useState<ArtworkResponse[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const results = await mockApiCall(searchQuery);
+      const results = await searchArtworks(searchQuery);
       setArtworks(results);
     } catch (error) {
       console.error('Error fetching artworks:', error);
