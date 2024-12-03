@@ -1,12 +1,5 @@
 import { NextResponse } from "next/server";
-
-const placeholderImages = [
-  'https://images.unsplash.com/photo-1541961017774-22349e4a1262',
-  'https://images.unsplash.com/photo-1549887534-1541e9326642',
-  'https://images.unsplash.com/photo-1541963463532-d68292c34b19',
-  'https://images.unsplash.com/photo-1579783483458-83d02161294e',
-  'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5'
-];
+import * as cheerio from 'cheerio';
 
 export async function GET(request: Request) {
   try {
@@ -17,9 +10,30 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: "Query is required" }, { status: 400 });
     }
 
-    // Return a random image from the placeholder images
-    const randomImage = placeholderImages[Math.floor(Math.random() * placeholderImages.length)];
-    return NextResponse.json({ imageUrl: randomImage });
+    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(query)}&tbm=isch`;
+    
+    const response = await fetch(searchUrl, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+      }
+    });
+
+    const html = await response.text();
+    const $ = cheerio.load(html);
+    
+    // Find image URLs in the page
+    const imageUrls: string[] = [];
+    $('img').each((_, element) => {
+      const src = $(element).attr('src');
+      if (src && src.startsWith('http')) {
+        imageUrls.push(src);
+      }
+    });
+
+    // Get the first valid image URL or return a placeholder
+    const imageUrl = imageUrls[0] || 'https://via.placeholder.com/400x300?text=Image+Not+Found';
+    
+    return NextResponse.json({ imageUrl });
   } catch (error) {
     console.error("Error fetching image:", error);
     return NextResponse.json({ error: "Failed to fetch image" }, { status: 500 });
