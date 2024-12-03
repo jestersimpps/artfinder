@@ -24,14 +24,26 @@ export default function ImageModal({ imageUrl, alt, isOpen, onClose }: ImageModa
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-        <div className="relative w-[80vw] h-[80vh]">
-          <Image
-            src={imageUrl}
-            alt={alt}
-            fill
-            className="object-contain"
-            sizes="80vw"
-          />
+        <div className="flex flex-col gap-4">
+          <div className="relative w-[80vw] h-[80vh]">
+            <Image
+              src={imageUrl}
+              alt={alt}
+              fill
+              className="object-contain"
+              sizes="80vw"
+            />
+          </div>
+          <a
+            href={imageUrl}
+            download
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full text-center bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors"
+            onClick={(e) => e.stopPropagation()}
+          >
+            Download Image
+          </a>
         </div>
       </div>
     </div>
