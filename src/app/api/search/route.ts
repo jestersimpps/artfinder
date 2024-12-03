@@ -18,7 +18,7 @@ export async function POST(request: Request) {
    messages: [
     {
      role: "system",
-     content: `You are an art expert. Generate artwork information based on the user's description. Return the artworks that match the description or theme.
+     content: `You are an art expert. Generate artwork information based on the user's description. Return the artworks that are the best match for the user's description or theme.
 Return the response in this exact JSON format:
 {
   "artworks": [
