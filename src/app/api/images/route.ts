@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { google } from '@googleapis/customsearch';
+import { customsearch_v1 } from '@googleapis/customsearch';
+import { google } from 'googleapis';
 
 const customSearch = google.customsearch('v1');
 
