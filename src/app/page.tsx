@@ -1,16 +1,25 @@
 'use client';
 import { useState } from 'react';
+import ArtworkCard from '@/components/ArtworkCard';
+import { mockApiCall } from '@/lib/mockData';
+import type { Artwork } from '@/lib/mockData';
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [artworks, setArtworks] = useState([]);
+  const [artworks, setArtworks] = useState<Artwork[]>([]);
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement API calls here
-    setIsLoading(false);
+    try {
+      const results = await mockApiCall(searchQuery);
+      setArtworks(results);
+    } catch (error) {
+      console.error('Error fetching artworks:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -38,8 +47,20 @@ export default function Home() {
         </form>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {/* Artwork cards will go here */}
-          {artworks.length === 0 && !isLoading && (
+          {isLoading ? (
+            <div className="col-span-full text-center">Loading...</div>
+          ) : artworks.length > 0 ? (
+            artworks.map((artwork) => (
+              <ArtworkCard
+                key={artwork.id}
+                title={artwork.title}
+                artist={artwork.artist}
+                year={artwork.year}
+                imageUrl={artwork.imageUrl}
+                description={artwork.description}
+              />
+            ))
+          ) : (
             <p className="text-center col-span-full text-gray-500">
               Enter a description to search for artworks
             </p>
