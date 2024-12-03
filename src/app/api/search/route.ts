@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import OpenAI from "openai";
-import { getRandomArtImage } from "@/lib/imageService";
 
 const openai = new OpenAI({
  apiKey: process.env.OPENAI_API_KEY,
@@ -57,11 +56,28 @@ Return the response in this exact JSON format:
    );
   }
 
-  // Add random art images to each artwork
-  const artworksWithImages = response.artworks.map((artwork) => ({
-   ...artwork,
-   imageUrl: getRandomArtImage(),
-  }));
+  // Add images to each artwork
+  const artworksWithImages = await Promise.all(
+    response.artworks.map(async (artwork) => {
+      try {
+        const searchQuery = `${artwork.title} ${artwork.artist} artwork`;
+        const imageResponse = await fetch(
+          `${request.nextUrl.origin}/api/images?query=${encodeURIComponent(searchQuery)}`
+        );
+        const imageData = await imageResponse.json();
+        return {
+          ...artwork,
+          imageUrl: imageData.imageUrl,
+        };
+      } catch (error) {
+        console.error("Error fetching image for artwork:", error);
+        return {
+          ...artwork,
+          imageUrl: "https://via.placeholder.com/400x300?text=Image+Not+Found",
+        };
+      }
+    })
+  );
 
   return NextResponse.json({ artworks: artworksWithImages });
  } catch (error) {
