@@ -4,9 +4,14 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: '**',
+        hostname: '*',
       },
+      {
+        protocol: 'http',
+        hostname: '*',
+      }
     ],
+    unoptimized: true,
   },
 };
 
