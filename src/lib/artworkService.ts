@@ -1,4 +1,5 @@
 import OpenAI from 'openai';
+import { getRandomArtImage } from './imageService';
 
 const openai = new OpenAI({
   apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY,
@@ -29,7 +30,7 @@ Return the response in this exact JSON format:
       "title": "artwork title",
       "artist": "artist name",
       "year": "year created",
-      "imageUrl": "https://images.unsplash.com/photo-appropriate-to-artwork",
+      "imageUrl": "not-needed",
       "description": "brief description"
     }
   ]
@@ -52,7 +53,11 @@ Return the response in this exact JSON format:
     if (!response.artworks || !Array.isArray(response.artworks)) {
       throw new Error('Invalid response format from OpenAI');
     }
-    return response.artworks;
+    // Add random art images to each artwork
+    return response.artworks.map(artwork => ({
+      ...artwork,
+      imageUrl: getRandomArtImage()
+    }));
   } catch (error) {
     console.error('Error calling OpenAI:', error);
     if (error instanceof SyntaxError) {
