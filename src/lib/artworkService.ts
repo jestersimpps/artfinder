@@ -44,7 +44,11 @@ Return the response in this exact JSON format:
       temperature: 0.7,
     });
 
-    const response = JSON.parse(completion.choices[0].message.content);
+    const content = completion.choices[0].message.content;
+    if (!content) {
+      throw new Error('Empty response from OpenAI');
+    }
+    const response = JSON.parse(content);
     if (!response.artworks || !Array.isArray(response.artworks)) {
       throw new Error('Invalid response format from OpenAI');
     }
